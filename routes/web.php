@@ -24,9 +24,8 @@ use Laravel\Jetstream\Http\Controllers\Livewire\UserProfileController;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-})->name('welcome');;
+Route::get('/', [App\Http\Controllers\JobOfferController::class, 'index'])
+    ->name('root');
 
 require __DIR__ . '/auth.php';
 
