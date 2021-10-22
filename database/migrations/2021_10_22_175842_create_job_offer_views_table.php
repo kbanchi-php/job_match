@@ -15,7 +15,16 @@ class CreateJobOfferViewsTable extends Migration
     {
         Schema::create('job_offer_views', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('job_offer_id')
+                ->constrained()
+                ->cascadeOnUpdate()
+                ->cascadeOnDelete();
+            $table->foreignId('user_id')
+                ->constrained()
+                ->cascadeOnUpdate()
+                ->cascadeOnDelete();
             $table->timestamps();
+            $table->unique(['job_offer_id', 'user_id']);
         });
     }
 
