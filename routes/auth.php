@@ -13,34 +13,8 @@ use Laravel\Fortify\Http\Controllers\ProfileInformationController;
 use Laravel\Fortify\Http\Controllers\RegisteredUserController;
 use Laravel\Jetstream\Http\Controllers\Livewire\UserProfileController;
 
-/*
-|--------------------------------------------------------------------------
-| Web Routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register web routes for your application. These
-| routes are loaded by the RouteServiceProvider within a group which
-| contains the "web" middleware group. Now create something great!
-|
-*/
-
-Route::get('/', function () {
-    return view('welcome');
-})->name('welcome');;
-
-require __DIR__ . '/auth.php';
-
-Route::resource('job_offers', App\Http\Controllers\JobOfferController::class)
-    ->only(['create', 'store', 'edit', 'update', 'destroy'])
-    ->middleware('auth:companies');
-
-Route::resource('job_offers', App\Http\Controllers\JobOfferController::class)
-    ->only(['show', 'index'])
-    ->middleware('auth:companies,users');
-
 foreach (config('fortify.users') as $user) {
     Route::prefix($user)
-        ->namespace('\Laravel\Fortify\Http\Controllers')
         ->name($user . '.')
         ->group(function () use ($user) {
             Route::name('dashboard')->middleware(['auth:' . Str::plural($user), 'verified'])
@@ -149,7 +123,6 @@ foreach (config('fortify.users') as $user) {
 }
 foreach (config('fortify.users') as $user) {
     Route::prefix($user)
-        ->namespace('\Laravel\Jetstream\Http\Controllers\Livewire')
         ->name($user . '.')
         ->group(function () use ($user) {
             Route::get('/profile', [UserProfileController::class, 'show'])
