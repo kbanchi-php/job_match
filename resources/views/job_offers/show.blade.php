@@ -96,6 +96,10 @@
                                     <td>{{ array_search($e->status, EntryConst::STATUS_LIST) }}</td>
                                     <td>
                                         <div class="flex flex-col sm:flex-row items-center sm:justify-end text-center">
+                                            @if ($e->status == EntryConst::STATUS_APPROVAL)
+                                                <a href="{{ route('job_offers.users.messages.index', [$jobOffer, $e->user]) }}"
+                                                    class="bg-gradient-to-r bg-gradient-to-r from-indigo-500 to-blue-600 hover:bg-gradient-to-l hover:from-blue-500 hover:to-indigo-600 text-gray-100 p-2 rounded-full tracking-wide font-semibold shadow-lg cursor-pointer transition ease-in duration-500 w-full sm:w-32 sm:mr-2 mb-2 sm:mb-0 ml-2">メッセージ</a>
+                                            @endif
                                             <input type="submit" value="承認"
                                                 formaction="{{ route('job_offers.entries.approval', [$jobOffer, $e]) }}"
                                                 onclick="if(!confirm('承認しますか？')){return false};"
@@ -104,10 +108,6 @@
                                                 formaction="{{ route('job_offers.entries.reject', [$jobOffer, $e]) }}"
                                                 onclick="if(!confirm('却下しますか？')){return false};"
                                                 class="bg-gradient-to-r from-pink-500 to-purple-600 hover:bg-gradient-to-l hover:from-purple-500 hover:to-pink-600 text-gray-100 p-2 rounded-full tracking-wide font-semibold shadow-lg cursor-pointer transition ease-in duration-500 w-full sm:w-32 ml-2">
-                                            @if ($e->status == EntryConst::STATUS_APPROVAL)
-                                                <a href="{{ route('job_offers.users.messages.index', [$jobOffer, $e->user]) }}"
-                                                    class="bg-gradient-to-r bg-gradient-to-r from-indigo-500 to-blue-600 hover:bg-gradient-to-l hover:from-blue-500 hover:to-indigo-600 text-gray-100 p-2 rounded-full tracking-wide font-semibold shadow-lg cursor-pointer transition ease-in duration-500 w-full sm:w-32 sm:mr-2 mb-2 sm:mb-0 ml-2">メッセージ</a>
-                                            @endif
                                         </div>
                                     </td>
                                 </tr>
