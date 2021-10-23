@@ -12,15 +12,13 @@ use Laravel\Fortify\Http\Controllers\PasswordResetLinkController;
 use Laravel\Fortify\Http\Controllers\ProfileInformationController;
 use Laravel\Fortify\Http\Controllers\RegisteredUserController;
 use Laravel\Jetstream\Http\Controllers\Livewire\UserProfileController;
+use App\Http\Controllers\CompanyController;
+use App\Http\Controllers\UserController;
 
 foreach (config('fortify.users') as $user) {
     Route::prefix($user)
         ->name($user . '.')
-        ->group(function () use ($user) {
-            Route::name('dashboard')->middleware(['auth:' . Str::plural($user), 'verified'])
-                ->get('/dashboard', function () use ($user) {
-                    return view('auth.' . $user . '.dashboard');
-                });
+        ->group(function () {
 
             $enableViews = config('fortify.views', true);
 
@@ -130,3 +128,11 @@ foreach (config('fortify.users') as $user) {
                 ->name('profile.show');
         });
 }
+
+Route::get('company/dashboard', [CompanyController::class, 'dashboard'])
+    ->middleware(['auth:companies'])
+    ->name('company.dashboard');
+
+Route::get('user/dashboard', [UserController::class, 'dashboard'])
+    ->middleware(['auth:users'])
+    ->name('user.dashboard');

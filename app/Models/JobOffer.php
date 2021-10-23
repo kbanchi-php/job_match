@@ -6,6 +6,8 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
 use App\Consts\JobOfferConst;
+use App\Consts\CompanyConst;
+use Illuminate\Support\Facades\Auth;
 
 class JobOffer extends Model
 {
@@ -44,6 +46,25 @@ class JobOffer extends Model
         } elseif (!empty($params['sort']) && $params['sort'] == JobOfferConst::SORT_VIEW_RANK) {
             $query->withCount('jobOfferViews')
                 ->orderBy('job_offer_views_count', 'desc');
+        }
+
+        return $query;
+    }
+
+    public function scopeMyJobOffer(Builder $query)
+    {
+        $query->where(
+            'company_id',
+            Auth::guard(CompanyConst::GUARD)->user()->id
+        );
+
+        return $query;
+    }
+
+    public function scopeSearchStatus(Builder $query, $params)
+    {
+        if (isset($params['status'])) {
+            $query->where('status', $params['status']);
         }
 
         return $query;
