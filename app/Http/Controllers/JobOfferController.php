@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Consts\UserConst;
 use Illuminate\Support\Str;
 use App\Consts\CompanyConst;
+use App\Models\Message;
 
 class JobOfferController extends Controller
 {
@@ -107,6 +108,7 @@ class JobOfferController extends Controller
 
         $entry = '';
         $entries = [];
+        $messages = [];
 
         if (Auth::guard(UserConst::GUARD)->check()) {
             JobOfferView::updateOrCreate([
@@ -124,8 +126,7 @@ class JobOfferController extends Controller
             $entries = $jobOffer->entries()->with('user')->get();
         }
 
-
-        return view('job_offers.show', compact('jobOffer', 'entry', 'entries'));
+        return view('job_offers.show', compact('jobOffer', 'entry', 'entries', 'messages'));
     }
 
     /**

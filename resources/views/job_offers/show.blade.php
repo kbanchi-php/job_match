@@ -16,7 +16,11 @@
                     <span>{{ $jobOffer->jobOfferViews->count() }} views</span>
                 </div>
             </div>
-            <p class="text-gray-700 text-base text-right">応募期限 :{{ $jobOffer->due_date }}</p>
+            <p class="text-gray-700 text-base text-right">応募期限 : {{ $jobOffer->due_date }}</p>
+            @if (!empty($entry))
+                <p class="text-red-700 text-base font-bold text-right">
+                    {{ array_search($entry->status, EntryConst::STATUS_LIST) }}</p>
+            @endif
             <h2 class="font-bold font-sans break-normal text-gray-900 pt-6 pb-1 text-3xl md:text-4xl">
                 {{ $jobOffer->title }}</h2>
             <div class="flex mt-1 mb-3">
@@ -60,6 +64,14 @@
                 </form>
             @endif
         </div>
+        @if (!empty($entry))
+            @if (Auth::guard(UserConst::GUARD)->check() && $entry->status == EntryConst::STATUS_APPROVAL)
+                <div class="flex flex-col sm:flex-row items-center sm:justify-end text-center my-4">
+                    <a href="{{ route('job_offers.users.messages.index', [$jobOffer, $user]) }}"
+                        class="bg-gradient-to-r sm:w-40 bg-gradient-to-r from-indigo-500 to-blue-600 hover:bg-gradient-to-l hover:from-blue-500 hover:to-indigo-600 text-gray-100 p-2 rounded-full tracking-wide font-semibold shadow-lg cursor-pointer transition ease-in duration-500 w-full sm:w-32">メッセージ</a>
+                </div>
+            @endif
+        @endif
         @if (!empty($entries))
             <hr>
             <h2 class="flex justify-center font-bold text-lg my-4">エントリー一覧</h2>
@@ -92,6 +104,10 @@
                                                 formaction="{{ route('job_offers.entries.reject', [$jobOffer, $e]) }}"
                                                 onclick="if(!confirm('却下しますか？')){return false};"
                                                 class="bg-gradient-to-r from-pink-500 to-purple-600 hover:bg-gradient-to-l hover:from-purple-500 hover:to-pink-600 text-gray-100 p-2 rounded-full tracking-wide font-semibold shadow-lg cursor-pointer transition ease-in duration-500 w-full sm:w-32 ml-2">
+                                            @if ($e->status == EntryConst::STATUS_APPROVAL)
+                                                <a href="{{ route('job_offers.users.messages.index', [$jobOffer, $e->user]) }}"
+                                                    class="bg-gradient-to-r bg-gradient-to-r from-indigo-500 to-blue-600 hover:bg-gradient-to-l hover:from-blue-500 hover:to-indigo-600 text-gray-100 p-2 rounded-full tracking-wide font-semibold shadow-lg cursor-pointer transition ease-in duration-500 w-full sm:w-32 sm:mr-2 mb-2 sm:mb-0 ml-2">メッセージ</a>
+                                            @endif
                                         </div>
                                     </td>
                                 </tr>

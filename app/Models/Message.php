@@ -5,12 +5,11 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Occupation extends Model
+class Message extends Model
 {
     use HasFactory;
 
-    public function job_offers()
-    {
-        return $this->hasMany(JobOffer::class);
-    }
+    protected $fillable = [
+        'message'
+    ];
 }

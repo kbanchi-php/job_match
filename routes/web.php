@@ -48,3 +48,7 @@ Route::patch('/job_offers/{job_offer}/entries/{entry}/reject', [App\Http\Control
 Route::resource('job_offers.entries', App\Http\Controllers\EntryController::class)
     ->only(['store', 'destroy'])
     ->middleware(['auth:users']);
+
+Route::resource('job_offers.users.messages', App\Http\Controllers\MessageController::class)
+    ->only(['index', 'store'])
+    ->middleware(['auth:companies,users']);
