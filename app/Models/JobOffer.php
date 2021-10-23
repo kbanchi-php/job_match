@@ -7,7 +7,9 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
 use App\Consts\JobOfferConst;
 use App\Consts\CompanyConst;
+use App\Consts\EntryConst;
 use Illuminate\Support\Facades\Auth;
+use App\Consts\UserConst;
 
 class JobOffer extends Model
 {
@@ -65,6 +67,36 @@ class JobOffer extends Model
     {
         if (isset($params['status'])) {
             $query->where('status', $params['status']);
+        }
+
+        return $query;
+    }
+
+    public function scopeSearchEntry(Builder $query)
+    {
+        $query->whereHas('entries', function ($query) {
+            $query->where('user_id', Auth::guard(UserConst::GUARD)->user()->id);
+        });
+
+        return $query;
+    }
+
+    public function scopeSearchEntryStatus(Builder $query, $params)
+    {
+        if ((empty($params['status'])) ||
+            (!empty($params['status']) && $params['status'] == EntryConst::STATUS_ENTRY)
+        ) {
+            $query->whereHas('entries', function ($query) {
+                $query->where('status', EntryConst::STATUS_ENTRY);
+            });
+        } elseif (!empty($params['status']) && $params['status'] == EntryConst::STATUS_APPROVAL) {
+            $query->whereHas('entries', function ($query) {
+                $query->where('status', EntryConst::STATUS_APPROVAL);
+            });
+        } elseif (!empty($params['status']) && $params['status'] == EntryConst::STATUS_REJECT) {
+            $query->whereHas('entries', function ($query) {
+                $query->where('status', EntryConst::STATUS_REJECT);
+            });
         }
 
         return $query;
