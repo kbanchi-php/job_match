@@ -63,4 +63,9 @@ class JobOffer extends Model
     {
         return $this->hasMany(JobOfferView::class);
     }
+
+    public function entries()
+    {
+        return $this->hasMany(Entry::class);
+    }
 }

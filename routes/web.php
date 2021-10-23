@@ -36,3 +36,7 @@ Route::resource('job_offers', App\Http\Controllers\JobOfferController::class)
 Route::resource('job_offers', App\Http\Controllers\JobOfferController::class)
     ->only(['show', 'index'])
     ->middleware('auth:companies,users');
+
+Route::resource('job_offers.entries', App\Http\Controllers\EntryController::class)
+    ->only(['store', 'destroy'])
+    ->middleware(['auth:users']);
