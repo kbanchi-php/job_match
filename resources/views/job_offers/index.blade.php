@@ -33,7 +33,7 @@
                 </ul>
             </div>
             <div class="w-full">
-                @foreach ($jobOffers as $j)jo
+                @foreach ($jobOffers as $j)
                     <div class="bg-white w-full px-10 py-8 hover:shadow-2xl transition duration-500">
                         <div class="mt-4">
                             <div class="flex justify-between text-sm items-center mb-4">
