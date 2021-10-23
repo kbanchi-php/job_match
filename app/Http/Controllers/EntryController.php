@@ -8,6 +8,7 @@ use App\Models\JobOffer;
 use App\Models\Entry;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use App\Consts\EntryConst;
 
 class EntryController extends Controller
 {
@@ -44,5 +45,23 @@ class EntryController extends Controller
 
         return redirect()->route('job_offers.show', $jobOffer)
             ->with('notice', 'エントリーを取り消しました');
+    }
+
+    public function approval(JobOffer $jobOffer, Entry $entry)
+    {
+        $entry->status = EntryConst::STATUS_APPROVAL;
+        $entry->save();
+
+        return redirect()->route('job_offers.show', $jobOffer)
+            ->with('notice', 'エントリーを承認しました');
+    }
+
+    public function reject(JobOffer $jobOffer, Entry $entry)
+    {
+        $entry->status = EntryConst::STATUS_REJECT;
+        $entry->save();
+
+        return redirect()->route('job_offers.show', $jobOffer)
+            ->with('notice', 'エントリーを却下しました');
     }
 }
