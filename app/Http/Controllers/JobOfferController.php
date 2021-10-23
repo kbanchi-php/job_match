@@ -11,6 +11,7 @@ use App\Models\JobOfferView;
 use Illuminate\Support\Facades\Auth;
 use App\Consts\UserConst;
 use Illuminate\Support\Str;
+use App\Consts\CompanyConst;
 
 class JobOfferController extends Controller
 {
@@ -33,11 +34,23 @@ class JobOfferController extends Controller
         } else {
             $params = $request->query();
             $jobOffers = JobOffer::search($params)->openData()
-                ->with(['company', 'occupation'])->latest()->paginate(5);
+                ->order($params)->with(['company', 'occupation'])->latest()->paginate(5);
             $occupation = $request->occupation;
+
+            $search_occupation = empty($occupation) ? [] : ['occupation' => $occupation];
+            $sort = empty($request->sort) ? [] : ['sort' => $request->sort];
+
             $jobOffers->appends(compact('occupation'));
             $occupations = Occupation::all();
-            return view('job_offers.index', compact('jobOffers', 'occupations'));
+            return view(
+                'job_offers.index',
+                compact(
+                    'jobOffers',
+                    'occupations',
+                    'search_occupation',
+                    'sort'
+                )
+            );
         }
     }
 
@@ -108,7 +121,8 @@ class JobOfferController extends Controller
      */
     public function edit(JobOffer $jobOffer)
     {
-        //
+        $occupations = Occupation::all();
+        return view('job_offers.edit', compact('jobOffer', 'occupations'));
     }
 
     /**
@@ -120,7 +134,28 @@ class JobOfferController extends Controller
      */
     public function update(JobOfferRequest $request, JobOffer $jobOffer)
     {
-        //
+        if (Auth::guard(CompanyConst::GUARD)->user()->cannot('update', $jobOffer)) {
+            return redirect()->route('job_offers.show', $jobOffer)
+                ->withErrors('自分の求人情報以外は更新できません');
+        }
+        $jobOffer->fill($request->all());
+
+        // トランザクション開始
+        DB::beginTransaction();
+        try {
+            $jobOffer->save();
+
+            // トランザクション終了(成功)
+            DB::commit();
+        } catch (\Exception $e) {
+            // トランザクション終了(失敗)
+            DB::rollback();
+            return back()->withInput()
+                ->withErrors('求人情報更新処理でエラーが発生しました');
+        }
+
+        return redirect()->route('job_offers.show', $jobOffer)
+            ->with('notice', '求人情報を更新しました');
     }
 
     /**
@@ -131,6 +166,22 @@ class JobOfferController extends Controller
      */
     public function destroy(JobOffer $jobOffer)
     {
-        //
+        if (Auth::guard(CompanyConst::GUARD)->user()->cannot('delete', $jobOffer)) {
+            return redirect()->route('job_offers.show', $jobOffer)
+                ->withErrors('自分の求人情報以外は削除できません');
+        }
+        // トランザクション開始
+        DB::beginTransaction();
+        try {
+            $jobOffer->delete();
+        } catch (\Exception $e) {
+            // トランザクション終了(失敗)
+            DB::rollback();
+            return back()->withInput()
+                ->withErrors('求人情報削除処理でエラーが発生しました');
+        }
+
+        return redirect()->route('job_offers.index', $jobOffer)
+            ->with('notice', '求人情報を削除しました');
     }
 }

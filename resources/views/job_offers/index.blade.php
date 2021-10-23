@@ -3,26 +3,37 @@
         <div class="flex justify-end items-center mb-3">
             <h4 class="text-gray-400 text-sm">並び替え</h4>
             <ul class="flex">
-                <li class="ml-4"><a href="" class="hover:text-blue-500">新着</a></li>
-                <li class="ml-4"><a href="" class="hover:text-blue-500">人気</a></li>
+                @foreach (JobOfferConst::SORT_LIST as $name => $value)
+                    <li class="ml-4">
+                        @if ((strpos(url()->full(), 'sort=' . $value)) ||
+                        (!strpos(url()->full(), 'sort') && JobOfferConst::SORT_NEW_ARRIVALS == $value))
+                        <a href="/?{{ http_build_query(array_merge($search_occupation, ['sort' => $value])) }}"
+                            class="hover:text-blue-500 text-green-500 font-bold">{{ $name }}</a>
+                    @else
+                        <a href="/?{{ http_build_query(array_merge($search_occupation, ['sort' => $value])) }}"
+                            class="hover:text-blue-500">{{ $name }}</a>
+                @endif
+                </li>
+                @endforeach
             </ul>
         </div>
         <div class="flex justify-between">
             <div class="w-2/5">
                 <h3 class="mb-3 text-gray-400 text-sm">検索条件</h3>
                 <ul>
-                    <li class="mb-2"><a href="/"
+                    <li class="mb-2"><a href="/{{ empty($sort) ? '' : '?' . http_build_query($sort) }}"
                             class="hover:text-blue-500 {{ strpos(url()->full(), 'occupation') ?: 'text-green-500 font-bold' }}">全て</a>
                     </li>
                     @foreach ($occupations as $o)
-                        <li class="mb-2"><a href="/?occupation={{ $o->id }}"
+                        <li class="mb-2"><a
+                                href="/?{{ http_build_query(array_merge($sort, ['occupation' => $o->id])) }}"
                                 class="hover:text-blue-500 {{ strpos(url()->full(), 'occupation=' . $o->id) ? 'text-green-500 font-bold' : '' }}">{{ $o->name }}</a>
                         </li>
                     @endforeach
                 </ul>
             </div>
             <div class="w-full">
-                @foreach ($jobOffers as $j)
+                @foreach ($jobOffers as $j)jo
                     <div class="bg-white w-full px-10 py-8 hover:shadow-2xl transition duration-500">
                         <div class="mt-4">
                             <div class="flex justify-between text-sm items-center mb-4">
