@@ -51,7 +51,7 @@ class MessageController extends Controller
             $message->send_by = MessageConst::SEND_BY_USER;
         }
         if (Auth::guard(CompanyConst::GUARD)->check()) {
-            $message->user_id = $jobOffer->company->id;
+            $message->user_id = $request->partner_id;
             $message->send_by = MessageConst::SEND_BY_COMPANY;
         }
 
@@ -65,8 +65,15 @@ class MessageController extends Controller
                 ->withErrors('エラーが発生しました');
         }
 
-        return redirect()
-            ->route('job_offers.users.messages.index', [$jobOffer, $user])
-            ->with('notice', 'Send Message');
+        if (Auth::guard(UserConst::GUARD)->check()) {
+            return redirect()
+                ->route('job_offers.users.messages.index', [$jobOffer, $user])
+                ->with('notice', 'Send Message');
+        }
+        if (Auth::guard(CompanyConst::GUARD)->check()) {
+            return redirect()
+                ->route('job_offers.users.messages.index', [$jobOffer, User::find($request->partner_id)])
+                ->with('notice', 'Send Message');
+        }
     }
 }
