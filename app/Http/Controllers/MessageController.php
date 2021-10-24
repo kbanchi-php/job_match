@@ -35,9 +35,7 @@ class MessageController extends Controller
             $send_by = MessageConst::SEND_BY_COMPANY;
         }
 
-        $target_user = $user;
-
-        return view('messages.index', compact('jobOffer', 'messages', 'partner', 'send_by', 'target_user'));
+        return view('messages.index', compact('jobOffer', 'messages', 'partner', 'send_by'));
     }
 
     public function store(Request $request, JobOffer $jobOffer, User $user)

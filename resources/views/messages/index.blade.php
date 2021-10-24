@@ -9,8 +9,8 @@
             <div class="flex flex-wrap flex-row">
                 @foreach ($messages as $message)
                     @if ($message->send_by == $send_by)
-                        <div class="w-1/2"></div>
-                        <div class="w-1/2">
+                        <div class="w-1/4"></div>
+                        <div class="w-3/4">
                             <div class="flex flex-col sm:flex-row items-center sm:justify-end text-center my-4">
                                 <p class="text-gray-700 text-sm text-left m-2">
                                     {{ $message->created_at }}
@@ -23,7 +23,7 @@
                             </p>
                         </div>
                     @else
-                        <div class="w-1/2">
+                        <div class="w-3/4">
                             <div class="flex flex-col sm:flex-row items-center text-center my-4">
                                 <img class="h-8 w-8 rounded-full object-cover" src="{{ $partner->profile_photo_url }}"
                                     alt="{{ $partner->name }}" />
@@ -35,12 +35,12 @@
                                 {{ $message->message }}
                             </p>
                         </div>
-                        <div class="w-1/2"></div>
+                        <div class="w-1/4"></div>
                     @endif
                 @endforeach
             </div>
-            <form action="{{ route('job_offers.users.messages.store', [$jobOffer, $target_user]) }}" method="POST"
-                class="rounded pt-3 pb-8 mb-4">
+            <form action="{{ route('job_offers.users.messages.store', [$jobOffer, $messages->first()->user]) }}"
+                method="POST" class="rounded pt-3 pb-8 mb-4">
                 @csrf
                 <input type="text" name="message"
                     class="rounded-md shadow-sm border-gray-300 focus:border-indigo-300 focus:ring focus:ring-pink-600 w-full py-2 px-3"
