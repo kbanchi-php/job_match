@@ -15,13 +15,11 @@ class UserController extends Controller
         $param = $request->query();
         $status = $request->status;
 
-        $jobOffers = JobOffer::searchEntry()
-            ->searchEntryStatus($param)
+        $jobOffers = JobOffer::searchEntry($param)
             ->latest()->paginate(5);
 
         $jobOffers->appends(compact('status'));
-        $status = empty($request->status) ? [] : ['status' => $request->status];
 
-        return view('auth.user.dashboard', compact('jobOffers', 'status'));
+        return view('auth.user.dashboard', compact('jobOffers'));
     }
 }

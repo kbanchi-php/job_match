@@ -25,7 +25,13 @@ use Laravel\Jetstream\Http\Controllers\Livewire\UserProfileController;
 */
 
 Route::get('/', [App\Http\Controllers\JobOfferController::class, 'index'])
-    ->name('root');
+    ->name('root')
+    ->middleware('auth:companies,users');
+
+Route::get('/welcome', function () {
+    return view('welcome');
+})->name('welcome')
+    ->middleware('guest:companies,users');
 
 require __DIR__ . '/auth.php';
 

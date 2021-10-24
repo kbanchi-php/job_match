@@ -65,7 +65,7 @@
             @endif
         </div>
         @if (!empty($entry))
-            @if (Auth::guard(UserConst::GUARD)->check() && $entry->status == EntryConst::STATUS_APPROVAL)
+            @if ($entry->status == EntryConst::STATUS_APPROVAL)
                 <div class="flex flex-col sm:flex-row items-center sm:justify-end text-center my-4">
                     <a href="{{ route('job_offers.users.messages.index', [$jobOffer, $user]) }}"
                         class="bg-gradient-to-r sm:w-40 bg-gradient-to-r from-indigo-500 to-blue-600 hover:bg-gradient-to-l hover:from-blue-500 hover:to-indigo-600 text-gray-100 p-2 rounded-full tracking-wide font-semibold shadow-lg cursor-pointer transition ease-in duration-500 w-full sm:w-32">メッセージ</a>
