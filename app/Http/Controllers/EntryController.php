@@ -41,7 +41,20 @@ class EntryController extends Controller
 
     public function destroy(JobOffer $jobOffer, Entry $entry)
     {
-        $entry->delete();
+
+        DB::beginTransaction();
+        try {
+            // 削除
+            $entry->delete();
+
+            // トランザクション終了(成功)
+            DB::commit();
+        } catch (\Exception $e) {
+            // トランザクション終了(失敗)
+            DB::rollback();
+            return back()->withInput()
+                ->withErrors('エントリー削除でエラーが発生しました');
+        }
 
         return redirect()->route('job_offers.show', $jobOffer)
             ->with('notice', 'エントリーを取り消しました');

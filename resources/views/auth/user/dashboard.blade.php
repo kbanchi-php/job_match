@@ -48,5 +48,8 @@
             </div>
             <hr>
         @endforeach
+        <div class="block mt-3">
+            {{ $jobOffers->links() }}
+        </div>
     </div>
 </x-app-layout>

@@ -190,6 +190,7 @@ class JobOfferController extends Controller
         DB::beginTransaction();
         try {
             $jobOffer->delete();
+            db::commit();
         } catch (\Exception $e) {
             // トランザクション終了(失敗)
             DB::rollback();
