@@ -29,6 +29,8 @@
                     required placeholder="Message" value="{{ old('message') }}">
                 <input type="submit" value="Send"
                     class="w-full flex justify-center bg-gradient-to-r from-indigo-500 to-blue-600 hover:bg-gradient-to-l hover:from-blue-500 hover:to-indigo-600 text-gray-100 p-2 rounded-full tracking-wide font-semibold shadow-lg cursor-pointer transition ease-in duration-500">
+                <input type="hidden" value="{{ $sender->id }}" name="sender_id">
+                <input type="hidden" value="{{ $partner->id }}" name="partner_id">
             </form>
         </div>
     </div>
