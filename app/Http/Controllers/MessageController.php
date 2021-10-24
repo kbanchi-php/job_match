@@ -17,28 +17,27 @@ class MessageController extends Controller
 {
     public function index(JobOffer $jobOffer, User $user)
     {
+        $params = [
+            'job_offer_id' => $jobOffer->id,
+            'user_id' => $user->id,
+        ];
+        $messages = Message::search($params)
+            ->oldest()->get();
 
-        $query = Message::query();
-        $messages = $query
-            ->where('job_offer_id', $jobOffer->id)
-            ->where('user_id', $user->id)
-            ->get()->sortBy('created_at');
-
-        $sender = '';
         $partner = '';
         $send_by = '';
         if (Auth::guard(UserConst::GUARD)->check()) {
-            $sender = $user;
             $partner = $jobOffer->company;
             $send_by = MessageConst::SEND_BY_USER;
         }
         if (Auth::guard(CompanyConst::GUARD)->check()) {
-            $sender = $jobOffer->company;
             $partner = $user;
             $send_by = MessageConst::SEND_BY_COMPANY;
         }
 
-        return view('messages.index', compact('jobOffer', 'messages', 'sender', 'partner', 'send_by'));
+        $target_user = $user;
+
+        return view('messages.index', compact('jobOffer', 'messages', 'partner', 'send_by', 'target_user'));
     }
 
     public function store(Request $request, JobOffer $jobOffer, User $user)
@@ -46,12 +45,11 @@ class MessageController extends Controller
         $message = new Message();
         $message->message = $request->message;
         $message->job_offer_id = $jobOffer->id;
+        $message->user_id = $user->id;
         if (Auth::guard(UserConst::GUARD)->check()) {
-            $message->user_id = $user->id;
             $message->send_by = MessageConst::SEND_BY_USER;
         }
         if (Auth::guard(CompanyConst::GUARD)->check()) {
-            $message->user_id = $request->partner_id;
             $message->send_by = MessageConst::SEND_BY_COMPANY;
         }
 
@@ -65,15 +63,8 @@ class MessageController extends Controller
                 ->withErrors('エラーが発生しました');
         }
 
-        if (Auth::guard(UserConst::GUARD)->check()) {
-            return redirect()
-                ->route('job_offers.users.messages.index', [$jobOffer, $user])
-                ->with('notice', 'Send Message');
-        }
-        if (Auth::guard(CompanyConst::GUARD)->check()) {
-            return redirect()
-                ->route('job_offers.users.messages.index', [$jobOffer, User::find($request->partner_id)])
-                ->with('notice', 'Send Message');
-        }
+        return redirect()
+            ->route('job_offers.users.messages.index', [$jobOffer, $user])
+            ->with('notice', 'Send Message');
     }
 }

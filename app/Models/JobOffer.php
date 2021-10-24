@@ -121,4 +121,9 @@ class JobOffer extends Model
     {
         return $this->hasMany(Entry::class);
     }
+
+    public function messages()
+    {
+        return $this->hasMany(Message::class);
+    }
 }
