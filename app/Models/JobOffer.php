@@ -72,32 +72,20 @@ class JobOffer extends Model
         return $query;
     }
 
-    public function scopeSearchEntry(Builder $query)
+    public function scopeSearchEntry(Builder $query, $params)
     {
-        $query->whereHas('entries', function ($query) {
+        $query->whereHas('entries', function ($query) use ($params) {
             $query->where('user_id', Auth::guard(UserConst::GUARD)->user()->id);
-        });
-
-        return $query;
-    }
-
-    public function scopeSearchEntryStatus(Builder $query, $params)
-    {
-        if ((empty($params['status'])) ||
-            (!empty($params['status']) && $params['status'] == EntryConst::STATUS_ENTRY)
-        ) {
-            $query->whereHas('entries', function ($query) {
+            if ((empty($params['status'])) ||
+                ($params['status'] == EntryConst::STATUS_ENTRY)
+            ) {
                 $query->where('status', EntryConst::STATUS_ENTRY);
-            });
-        } elseif (!empty($params['status']) && $params['status'] == EntryConst::STATUS_APPROVAL) {
-            $query->whereHas('entries', function ($query) {
+            } elseif ($params['status'] == EntryConst::STATUS_APPROVAL) {
                 $query->where('status', EntryConst::STATUS_APPROVAL);
-            });
-        } elseif (!empty($params['status']) && $params['status'] == EntryConst::STATUS_REJECT) {
-            $query->whereHas('entries', function ($query) {
+            } elseif ($params['status'] == EntryConst::STATUS_REJECT) {
                 $query->where('status', EntryConst::STATUS_REJECT);
-            });
-        }
+            }
+        });
 
         return $query;
     }
